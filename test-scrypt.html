@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>SCRYPT test suite</title>
+<link rel="stylesheet" href="http://code.jquery.com/qunit/qunit-1.12.0.css">
+<script src="http://code.jquery.com/qunit/qunit-1.12.0.js"></script>
+</head>
+<body>
+<div id="qunit"></div>
+<div id="qunit-fixture"></div>
+<script>asmCrypto = exports = {};</script>
+<script src="js/scrypt.asm.js"></script>
+<script>
+
+test( "dummy test", function () {
+    ok( true, "Passed!" );
+});
+
+///////////////////////////////////////////////////////////////////////////////
+
+module("SCRYPT");
+
+var salsa20_8_vectors = [
+    [
+        [
+            0x00000000, 0x00000000, 0x00000000, 0x00000000,
+            0x00000000, 0x00000000, 0x00000000, 0x00000000,
+            0x00000000, 0x00000000, 0x00000000, 0x00000000,
+            0x00000000, 0x00000000, 0x00000000, 0x00000000
+        ],
+
+        [
+            0x00000000, 0x00000000, 0x00000000, 0x00000000,
+            0x00000000, 0x00000000, 0x00000000, 0x00000000,
+            0x00000000, 0x00000000, 0x00000000, 0x00000000,
+            0x00000000, 0x00000000, 0x00000000, 0x00000000
+        ]
+    ],
+
+    [
+        [
+            0x80000000, 0x80000000, 0x80000000, 0x80000000,
+            0x80000000, 0x80000000, 0x80000000, 0x80000000,
+            0x80000000, 0x80000000, 0x80000000, 0x80000000,
+            0x80000000, 0x80000000, 0x80000000, 0x80000000
+        ],
+
+        [
+            0x00000000, 0x00000000, 0x00000000, 0x00000000,
+            0x00000000, 0x00000000, 0x00000000, 0x00000000,
+            0x00000000, 0x00000000, 0x00000000, 0x00000000,
+            0x00000000, 0x00000000, 0x00000000, 0x00000000
+        ]
+    ],
+
+    [
+        [
+            0x219a877e, 0x86c93e4f, 0xe640a97c, 0x268f7141,
+            0x5b55eeba, 0xb5c1618c, 0x1146f80d, 0x1d3bcd6d,
+            0x19f324ee, 0x853d9bdf, 0x4b1e1214, 0x32aac55a,
+            0x291d0276, 0x2948c709, 0x8dc6ebed, 0x5ec2b8b8
+        ],
+
+        [
+            0x9c851fa4, 0x99cc0866, 0xcbca813b, 0x05ef0c02,
+            0x81214b04, 0x7d33fda2, 0x631c7bfd, 0x292f6896,
+            0x683139b4, 0xbce6c9e3, 0xb7c56bfe, 0xba966da0,
+            0x10cc24e4, 0x5c74912c, 0x3d67ad24, 0x818f61c7
+        ]
+    ]
+];
+
+test( "Salsa20/8", function () {
+    for ( var i = 0; i < salsa20_8_vectors.length; ++i ) {
+        var m = asmCrypto._scrypt_asm( window, null, (new Uint32Array(4096>>2)).buffer );
+        m._salsa20_8.apply( m, salsa20_8_vectors[i][0] );
+        ok(
+            m._salsa20_8_test.apply( m, salsa20_8_vectors[i][1] ),
+            "Salsa20/8 vector " + i
+        );
+    }
+});
+
+var block_mix_vectors = [
+    [
+        [
+           0x650bcef7, 0xa4722d3d, 0xabf58c10, 0xddff12e9,
+           0xdb167677, 0x0ea727bb, 0xaef30482, 0xad6f0f2d,
+           0x488ff689, 0x7be8d111, 0x40d73bcc, 0x29fd9f0a,
+           0x84014f09, 0xf3749563, 0x31a1e59a, 0xd7bc1752,
+
+           0x44914989, 0x22bb1372, 0x4db5256c, 0xfb7063a8,
+           0x804398cd, 0xbb664637, 0xbfb5fc8f, 0xb054c240,
+           0x517cd267, 0xfed54ace, 0x0bc929d8, 0x1b575a50,
+           0xad1c4d7f, 0xda3c526a, 0xbc670e77, 0x897eafea,
+        ],
+
+        [
+           0x9c851fa4, 0x99cc0866, 0xcbca813b, 0x05ef0c02,
+           0x81214b04, 0x7d33fda2, 0x631c7bfd, 0x292f6896,
+           0x683139b4, 0xbce6c9e3, 0xb7c56bfe, 0xba966da0,
+           0x10cc24e4, 0x5c74912c, 0x3d67ad24, 0x818f61c7,
+
+           0x75c9ed20, 0xa8813832, 0x4cf64005, 0x3ccd2d16,
+           0xfe7c0721, 0xe25f8d5f, 0x8f16a4b1, 0xb7783695,
+           0x803d3b7d, 0xabe4603b, 0xe5960992, 0xb6534d9b,
+           0x58222a5d, 0xf5edd577, 0xf1b92c84, 0x25e4ef4e,
+       ]
+   ]
+];
+
+test( "BlockMix", function () {
+    for ( var i = 0; i < block_mix_vectors.length; ++i ) {
+        var heap = new Uint32Array( 4096>>2 );
+        heap.set( block_mix_vectors[i][0], 0 );
+        heap.set( block_mix_vectors[i][1], 128>>2 );
+
+        var m = asmCrypto._scrypt_asm( window, null, heap.buffer );
+        m.init( 1, 0 );
+
+        m._block_mix( 0, 256 );
+
+        ok(
+            m._block_mix_test( 128, 256 ),
+            "BlockMix vector " + i
+        );
+    }
+});
+
+var ro_mix_vectors = [
+    [
+        [ 1, 4 ],
+        [
+            0x650bcef7, 0xa4722d3d, 0xabf58c10, 0xddff12e9,
+            0xdb167677, 0x0ea727bb, 0xaef30482, 0xad6f0f2d,
+            0x488ff689, 0x7be8d111, 0x40d73bcc, 0x29fd9f0a,
+            0x84014f09, 0xf3749563, 0x31a1e59a, 0xd7bc1752,
+            0x44914989, 0x22bb1372, 0x4db5256c, 0xfb7063a8,
+            0x804398cd, 0xbb664637, 0xbfb5fc8f, 0xb054c240,
+            0x517cd267, 0xfed54ace, 0x0bc929d8, 0x1b575a50,
+            0xad1c4d7f, 0xda3c526a, 0xbc670e77, 0x897eafea
+        ],
+        [
+            0x93c1cc79, 0xcaeb9d62, 0x700b7f04, 0xb6f64b60,
+            0x4adde32c, 0x55e32696, 0x9861fcfa, 0x462beae6,
+            0x671384d5, 0x29b0993b, 0x57c365d6, 0x26b41f60,
+            0xbbf4b2a0, 0x9fee00a2, 0x9bd1430a, 0x719c1a57,
+            0xe64211ef, 0x6f265a5d, 0x2c83cadd, 0x7caa9fe5,
+            0xf19c0bac, 0xcaff2bbe, 0xee010d30, 0xc4197638,
+            0x44fd12ae, 0xa003f238, 0x7ec4e1e4, 0x1f8614c3,
+            0xcb87904e, 0x686a3933, 0xd2f9e873, 0x8e4b9a53
+        ]
+    ],
+
+    [
+        [ 1, 10 ],
+        [
+            0x650bcef7, 0xa4722d3d, 0xabf58c10, 0xddff12e9,
+            0xdb167677, 0x0ea727bb, 0xaef30482, 0xad6f0f2d,
+            0x488ff689, 0x7be8d111, 0x40d73bcc, 0x29fd9f0a,
+            0x84014f09, 0xf3749563, 0x31a1e59a, 0xd7bc1752,
+            0x44914989, 0x22bb1372, 0x4db5256c, 0xfb7063a8,
+            0x804398cd, 0xbb664637, 0xbfb5fc8f, 0xb054c240,
+            0x517cd267, 0xfed54ace, 0x0bc929d8, 0x1b575a50,
+            0xad1c4d7f, 0xda3c526a, 0xbc670e77, 0x897eafea
+        ],
+        [
+            0x6e03f76e, 0x9cdaa994, 0x2cbfaffd, 0x0a975e1f,
+            0x68c9d451, 0x6f565ed3, 0x04684eb4, 0xcade555a,
+            0x538b7197, 0x634aa661, 0x3bd800ea, 0x2a1413cf,
+            0xab42b643, 0x1d6df516, 0xc924d293, 0x04c54cf1,
+            0x9797995d, 0x969b618a, 0xb576f683, 0xa7ec60f7,
+            0x031e80a7, 0xffc1743a, 0x233ed7d6, 0xc5ebfe9a,
+            0xacf48bfa, 0x9f27c507, 0x8922e76b, 0xe2e5173b,
+            0x617fde3a, 0xbc2d1a80, 0xaa12aad4, 0x63afeef0
+        ]
+    ]
+];
+
+test( "ROMix", function () {
+    for ( var i = 0; i < ro_mix_vectors.length; ++i ) {
+        var heap = new Uint32Array(65536);
+        var m = asmCrypto._scrypt_asm( window, null, heap.buffer );
+        m.init( ro_mix_vectors[i][0][0], ro_mix_vectors[i][0][1] );
+
+        heap.set( ro_mix_vectors[i][1], 0 );
+        heap.set( ro_mix_vectors[i][2], 128>>2 );
+
+        m._ro_mix( 0, 256 );
+
+        ok(
+            m._ro_mix_test( 128, 256 ),
+            "ROMix vector " + i
+        );
+    }
+});
+
+</script>
+</body>
