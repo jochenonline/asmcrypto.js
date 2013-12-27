@@ -240,11 +240,13 @@ function hmac_sha256_finish () {
     return this;
 }
 
+hmac_constructor.family = 'hmac';
 var hmac_prototype = hmac_constructor.prototype;
 hmac_prototype.reset =   hmac_reset;
 hmac_prototype.process = hmac_process;
 hmac_prototype.finish =  hmac_finish;
 
+hmac_sha256_constructor.family = 'hmac';
 hmac_sha256_constructor.BLOCK_SIZE = sha256_constructor.BLOCK_SIZE;
 hmac_sha256_constructor.HMAC_SIZE = sha256_constructor.HASH_SIZE;
 var hmac_sha256_prototype = hmac_sha256_constructor.prototype;

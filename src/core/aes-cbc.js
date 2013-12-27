@@ -227,16 +227,19 @@ function cbc_aes_decrypt ( data ) {
     return this;
 }
 
+cbc_aes_encrypt_constructor.family = 'cipher';
 var cbc_aes_encrypt_prototype = cbc_aes_encrypt_constructor.prototype;
 cbc_aes_encrypt_prototype.reset = cbc_aes_reset;
 cbc_aes_encrypt_prototype.process = cbc_aes_encrypt_process;
 cbc_aes_encrypt_prototype.finish = cbc_aes_encrypt_finish;
 
+cbc_aes_decrypt_constructor.family = 'cipher';
 var cbc_aes_decrypt_prototype = cbc_aes_decrypt_constructor.prototype;
 cbc_aes_decrypt_prototype.reset = cbc_aes_reset;
 cbc_aes_decrypt_prototype.process = cbc_aes_decrypt_process;
 cbc_aes_decrypt_prototype.finish = cbc_aes_decrypt_finish;
 
+cbc_aes_constructor.family = 'cipher';
 var cbc_aes_prototype = cbc_aes_constructor.prototype;
 cbc_aes_prototype.reset = cbc_aes_reset;
 cbc_aes_prototype.encrypt = cbc_aes_encrypt;

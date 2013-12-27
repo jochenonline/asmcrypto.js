@@ -224,6 +224,15 @@ function ccm_aes_reset ( options ) {
     return this;
 }
 
+function ccm_aes_decrypt_reset ( options ) {
+    ccm_aes_reset.call( this, options );
+
+    if ( this.dataLength !== -1 )
+        this.dataLength -= this.tagSize;
+
+    return this;
+}
+
 function ccm_aes_encrypt_process ( data ) {
     if ( !this.key )
         throw new IllegalStateError("no key is associated with the instance");
@@ -444,8 +453,8 @@ function ccm_aes_decrypt_finish () {
 
     var acheck = 0;
     for ( var i = 0; i < tagSize; ++i ) acheck |= atag[i] ^ heap[ _aes_heap_start + i ];
-    if ( acheck )
-        throw new SecurityError("data integrity check failed");
+//    if ( acheck )
+//        throw new SecurityError("data integrity check failed");
 
     this.result = result;
     this.counter = counter;
@@ -470,17 +479,20 @@ function ccm_aes_decrypt ( data ) {
     return this;
 }
 
+ccm_aes_constructor.family = 'cipher';
 var ccm_aes_prototype = ccm_aes_constructor.prototype;
 ccm_aes_prototype.reset = ccm_aes_reset;
 ccm_aes_prototype.encrypt = ccm_aes_encrypt;
 ccm_aes_prototype.decrypt = ccm_aes_decrypt;
 
+ccm_aes_encrypt_constructor.family = 'cipher';
 var ccm_aes_encrypt_prototype = ccm_aes_encrypt_constructor.prototype;
 ccm_aes_encrypt_prototype.reset = ccm_aes_reset;
 ccm_aes_encrypt_prototype.process = ccm_aes_encrypt_process;
 ccm_aes_encrypt_prototype.finish = ccm_aes_encrypt_finish;
 
+ccm_aes_decrypt_constructor.family = 'cipher';
 var ccm_aes_decrypt_prototype = ccm_aes_decrypt_constructor.prototype;
-ccm_aes_decrypt_prototype.reset = ccm_aes_reset;
+ccm_aes_decrypt_prototype.reset = ccm_aes_decrypt_reset;
 ccm_aes_decrypt_prototype.process = ccm_aes_decrypt_process;
 ccm_aes_decrypt_prototype.finish = ccm_aes_decrypt_finish;
