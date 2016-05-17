@@ -485,7 +485,7 @@ module.exports = function ( grunt ) {
             },
             all: {
                 files: {
-                    'asmcrypto.js': 'asmcrypto.js'
+                    'asmcrypto.min.js': 'asmcrypto.js'
                 }
             }
         },
