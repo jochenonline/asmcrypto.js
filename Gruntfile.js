@@ -456,7 +456,8 @@ module.exports = function ( grunt ) {
 
         concat: {
             options: {
-                banner: "/*! asmCrypto<%= pkg.version && ' v'+pkg.version %>, (c) 2013 <%= pkg.author.name %>, opensource.org/licenses/<%= pkg.license %> */\n"
+                banner: "/*! asmCrypto RED Medical <%= pkg.version && ' v'+pkg.version %>, (c) 2013 <%= pkg.author.name %>," +
+                " opensource.org/licenses/<%= pkg.license %> */\n"
                       + "(function ( exports, global ) {\n\n",
                 footer: "\n\n'function'==typeof define&&define.amd?define([],function(){return exports}):"
                       + "'object'==typeof module&&module.exports?module.exports=exports:global.asmCrypto=exports;"
@@ -479,7 +480,8 @@ module.exports = function ( grunt ) {
                 sourceMapIn: 'asmcrypto.js.map',
                 sourceMapIncludeSources: true,
                 screwIE8: true,
-                banner: "/*! asmCrypto<%= pkg.version && ' v'+pkg.version %>, (c) 2013 <%= pkg.author.name %>, opensource.org/licenses/<%= pkg.license %> */"
+                banner: "/*! asmCrypto RED Medical<%= pkg.version && ' v'+pkg.version %>, (c) 2013 <%= pkg.author.name %>," +
+                " opensource.org/licenses/<%= pkg.license %> */"
             },
             all: {
                 files: {

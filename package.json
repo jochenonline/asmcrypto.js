@@ -1,7 +1,8 @@
 {
-    "name": "asmcrypto.js",
-    "description": "Asm.js implementation of WebCrypto API",
-    "homepage": "https://github.com/vibornoff/asmcrypto.js",
+    "name": "asmcrypto-redmedical",
+    "version": "0.0.11-redmedical",
+    "description": "Asm.js implementation of WebCrypto API - the RED Medical version",
+    "homepage": "https://github.com/redmedical/asmcrypto-redmedical",
     "main": "asmcrypto.js",
     "license": "MIT",
     "author": {
@@ -23,7 +24,7 @@
     ],
     "repository": {
         "type": "git",
-        "url": "https://github.com/vibornoff/asmcrypto.js.git"
+        "url": "https://github.com/redmedical/asmcrypto-redmedical.git"
     },
     "devDependencies": {
         "uglify-js": "vibornoff/UglifyJS2",
@@ -42,7 +43,6 @@
         "node": "~0.10"
     },
     "scripts": {
-        "prepublish": "grunt",
         "test": "grunt test"
     }
 }

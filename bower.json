@@ -1,6 +1,6 @@
 {
-  "name": "asmcrypto",
-  "main": "asmcrypto.js",
+  "name": "asmcrypto-redmedical",
+  "main": "asmcrypto.min.js",
   "license": "MIT",
   "ignore": [
     "**/.*",
